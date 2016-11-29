@@ -20,11 +20,11 @@ class EXP3():
 
 def simu(p):
     # random drawn under p: P(X=i)=p_i
-    q = np.cumsum(p);
-    u = np.random.rand();
+    q = np.cumsum(p)
+    u = np.random.rand()
 
-    i = 1;
+    i = 1
     while u > q[i]:
-        i = i + 1;
+        i += 1
 
     return i
