@@ -48,7 +48,6 @@ class Simulator:
                     pref_nosugar += (1 - pref_nosugar) * pref_nosugar ** 4
                 else:
                     pref_nosugar += 3 * pref_nosugar * pref_nosugar ** 4
-                end
                 pref_energy = 1 - pref_nosugar
         # Random user preference
         rand = bernoulli.rvs(pref_energy)
