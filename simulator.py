@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.stats import bernoulli
 
+
 class Simulator:
     """Simulates an arm with finite support"""
 
@@ -61,7 +62,7 @@ class Simulator:
             self.n_nosugar -= 1
 
             # Evolution of the state of the environment
-        if self.state ==0 and bernoulli.rvs(self.p_exam_no_exam):
+        if self.state == 0 and bernoulli.rvs(self.p_exam_no_exam):
             self.state = 1
         elif self.state == 1 and bernoulli.rvs(self.p_exam_no_exam):
             self.state = 0
