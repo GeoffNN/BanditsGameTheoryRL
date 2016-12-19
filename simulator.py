@@ -29,7 +29,9 @@ class Simulator:
                 pref_nosugar = 1 - pref_energy
 
             elif discount_fraction < 0:  # The sugar free is discounted
+
                 pref_nosugar = pref_nosugar * np.exp(-2 * discount_fraction * np.log(1 / pref_nosugar))
+
                 pref_energy = 1 - pref_nosugar
         elif self.state == 1:
             # Exam situation
@@ -45,12 +47,13 @@ class Simulator:
                     pref_energy += 3 * pref_energy * pref_energy ** 4
                 pref_nosugar = 1 - pref_energy
             elif discount_fraction < 0:
-                if (4 * pref_nosugar > 1.0):
+                if 4 * pref_nosugar > 1.0:
                     pref_nosugar += (1 - pref_nosugar) * pref_nosugar ** 4
                 else:
                     pref_nosugar += 3 * pref_nosugar * pref_nosugar ** 4
                 pref_energy = 1 - pref_nosugar
         # Random user preference
+
         rand = bernoulli.rvs(pref_energy)
         if rand:
             # User with preference for non sugar drink
@@ -66,5 +69,4 @@ class Simulator:
             self.state = 1
         elif self.state == 1 and bernoulli.rvs(self.p_exam_no_exam):
             self.state = 0
-
         return reward, self.n_energy, self.n_nosugar

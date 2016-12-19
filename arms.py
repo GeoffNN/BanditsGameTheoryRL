@@ -46,9 +46,13 @@ import numpy as np
 from numpy import exp, log
 from numpy.random import random, beta
 
+from simulator import Simulator
+from soda_strategy import soda_strategy_param
+
 
 class ArmBernoulli():
     """Bernoulli arm"""
+
     def __init__(self, p):
         """
         p: Bernoulli parameter
@@ -56,7 +60,7 @@ class ArmBernoulli():
         self.p = p
         self.mean = p
         self.var = p * (1 - p)
-        
+
     def sample(self):
         reward = int(random() < self.p)
         return reward
@@ -64,6 +68,7 @@ class ArmBernoulli():
 
 class ArmBeta():
     """arm having a Beta distribution"""
+
     def __init__(self, a, b):
         """
         a: first beta parameter
@@ -73,7 +78,7 @@ class ArmBeta():
         self.b = b
         self.mean = a / (a + b)
         self.var = (a * b) / ((a + b) ** 2 * (a + b + 1))
-        
+
     def sample(self):
         reward = beta(self.a, self.b)
         return reward
@@ -81,18 +86,18 @@ class ArmBeta():
 
 class ArmExp():
     """arm with trucated exponential distribution"""
+
     def __init__(self, lambd):
         """
         lambd: parameter of the exponential distribution
         """
         self.lambd = lambd
         self.mean = (1 / lambd) * (1 - exp(-lambd))
-        self.var = 1 # compute it yourself!
-        
+        self.var = 1  # compute it yourself!
+
     def sample(self):
         reward = min(-1 / self.lambd * log(random()), 1)
         return reward
-
 
     def simu(p):
         """
@@ -112,6 +117,7 @@ class ArmExp():
 
 class ArmFinite():
     """arm with finite support"""
+
     def __init__(self, X, P):
         """
         X: support of the distribution
@@ -121,8 +127,30 @@ class ArmFinite():
         self.P = np.array(P)
         self.mean = (self.X * self.P).sum()
         self.var = (self.X ** 2 * self.P).sum() - self.mean ** 2
-        
+
     def sample(self):
         i = simu(self.P)
         reward = self.X[i]
         return reward
+
+
+class ArmVendingMachine():
+    def __init__(self, params=([1, 2, 3], [.1, .2, .3]), simulator=Simulator()):
+        self.params = params
+        self.simulator = simulator
+
+    def sample(self):
+        T, V = self.params
+        policy = lambda n_e, n_n: soda_strategy_param(n_e, n_n, T, V)
+        self.simulator.reset()  # refill
+        rew, n_energy, n_nosugar = self.simulator.simulate(0)
+        reward = rew
+        t = 1
+        while n_energy > 0 and n_nosugar > 0:
+            # no re-fill is needed
+            # Choose policy here
+            discount = policy(n_energy, n_nosugar)
+            rew, n_energy, n_nosugar = self.simulator.simulate(discount)
+            reward = reward + rew
+            t += 1
+        return reward/100

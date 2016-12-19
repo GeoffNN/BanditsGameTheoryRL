@@ -2,6 +2,9 @@ import arms
 import numpy as np
 from scipy.stats import bernoulli, beta
 
+from arms import ArmVendingMachine
+from simulator import Simulator
+
 
 class Bandit:
     """Class implementing a generic Bandit. Can be constructed from a list of arms or
@@ -162,3 +165,10 @@ class BanditFinite(Bandit):
 
     def __repr__(self):
         return self.parameter_list.__repr__()
+
+class BanditVendingMachine(Bandit):
+
+    def __init__(self, param_list):
+        self.arms = [ArmVendingMachine(params) for params in param_list]
+        self.n_arms = len(self.arms)
+
